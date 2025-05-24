@@ -1,0 +1,580 @@
+WinFormsApp1
+|_Data
+  |_DataContext.cs
+  |_DesignTimeDbContextFactory.cs
+|_Migrations
+|_Models
+  |_Book.cs
+  |_Publisher.cs
+|_Form1.Designer.cs
+|_Form1.cs
+|_Form1.resx
+|_Program.cs
+|_WinFormsApp1.csproj
+|_WinFormsApp1.sln
+
+
+
+Файл DataContext.cs
+
+﻿using Microsoft.EntityFrameworkCore;
+using WinFormsApp1.Models;
+
+namespace WinFormsApp1.Data
+{
+    public class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
+    {
+        public virtual DbSet<Book> Books => Set<Book>();
+        public virtual DbSet<Publisher> Publishers => Set<Publisher>();
+
+        // Add-Migration InitialCreate для создания миграции, надо открыть вкладку Package Manager Console (Tools -> Nuget Packet Manager -> Package Manager Console)
+    }
+}
+
+
+
+Файл DesignTimeDbContextFactory.cs
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+
+namespace WinFormsApp1.Data
+{
+    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<DataContext>
+    {
+        public DataContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
+            optionsBuilder.UseSqlite("FileName=:memory:");
+
+            return new DataContext(optionsBuilder.Options);
+        }
+    }
+
+}
+
+
+
+
+Файл Book.cs
+
+using System.Text.Json.Serialization;
+
+namespace WinFormsApp1.Models
+{
+    public class Book
+    {
+        public Guid Id { get; set; }
+        public string AuthorName { get; set; } = string.Empty;
+        public int Year { get; set; }
+        public int PageCount { get; set; }
+        public Guid PublisherId { get; set; }
+        [JsonIgnore]
+        public virtual Publisher Publisher { get; set; } = null!;
+    }
+}
+
+
+
+
+Файл Publisher.cs
+
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WinFormsApp1.Models
+{
+    public class Publisher
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+
+        [ForeignKey("PublisherId")]
+        public virtual List<Book> Books { get; set; } = [];
+    }
+}
+
+
+
+
+
+Файл Form1.Designer.cs
+
+
+namespace WinFormsApp1
+{
+    partial class Form1
+    {
+        /// <summary>
+        ///  Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        ///  Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        ///  Required method for Designer support - do not modify
+        ///  the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            LoadButton = new Button();
+            SaveButton = new Button();
+            YearFilterButton = new Button();
+            dataGridView1 = new DataGridView();
+            YearTextBox = new TextBox();
+            textBox2 = new TextBox();
+            button4 = new Button();
+            label1 = new Label();
+            label2 = new Label();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            SuspendLayout();
+            // 
+            // LoadButton
+            // 
+            LoadButton.Location = new Point(12, 12);
+            LoadButton.Name = "LoadButton";
+            LoadButton.Size = new Size(75, 23);
+            LoadButton.TabIndex = 0;
+            LoadButton.Text = "Загрузка";
+            LoadButton.UseVisualStyleBackColor = true;
+            LoadButton.Click += LoadButton_Click;
+            // 
+            // SaveButton
+            // 
+            SaveButton.Location = new Point(93, 12);
+            SaveButton.Name = "SaveButton";
+            SaveButton.Size = new Size(83, 23);
+            SaveButton.TabIndex = 1;
+            SaveButton.Text = "Сохранение";
+            SaveButton.UseVisualStyleBackColor = true;
+            SaveButton.Click += SaveButton_Click;
+            // 
+            // YearFilterButton
+            // 
+            YearFilterButton.Location = new Point(128, 61);
+            YearFilterButton.Name = "YearFilterButton";
+            YearFilterButton.Size = new Size(142, 23);
+            YearFilterButton.TabIndex = 4;
+            YearFilterButton.Text = "Отсортировать по году";
+            YearFilterButton.UseVisualStyleBackColor = true;
+            YearFilterButton.Click += button3_Click;
+            // 
+            // dataGridView1
+            // 
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Location = new Point(12, 173);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.Size = new Size(536, 217);
+            dataGridView1.TabIndex = 5;
+            // 
+            // YearTextBox
+            // 
+            YearTextBox.Location = new Point(12, 61);
+            YearTextBox.Name = "YearTextBox";
+            YearTextBox.Size = new Size(100, 23);
+            YearTextBox.TabIndex = 6;
+            // 
+            // textBox2
+            // 
+            textBox2.Location = new Point(12, 112);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(100, 23);
+            textBox2.TabIndex = 7;
+            // 
+            // button4
+            // 
+            button4.Location = new Point(128, 112);
+            button4.Name = "button4";
+            button4.Size = new Size(195, 23);
+            button4.TabIndex = 8;
+            button4.Text = "Минимальная по размеру книга";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(12, 43);
+            label1.Name = "label1";
+            label1.Size = new Size(26, 15);
+            label1.TabIndex = 9;
+            label1.Text = "Год";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(12, 94);
+            label2.Name = "label2";
+            label2.Size = new Size(40, 15);
+            label2.TabIndex = 10;
+            label2.Text = "Автор";
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(554, 395);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(button4);
+            Controls.Add(textBox2);
+            Controls.Add(YearTextBox);
+            Controls.Add(dataGridView1);
+            Controls.Add(YearFilterButton);
+            Controls.Add(SaveButton);
+            Controls.Add(LoadButton);
+            Name = "Form1";
+            Text = "Форма";
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
+        }
+
+        #endregion
+        private Button LoadButton;
+        private Button SaveButton;
+        private Button YearFilterButton;
+        private DataGridView dataGridView1;
+        private TextBox YearTextBox;
+        private TextBox textBox2;
+        private Button button4;
+        private Label label1;
+        private Label label2;
+    }
+}
+
+
+
+
+
+Файл Form1.cs
+
+using System.Text.Json;
+using WinFormsApp1.Models;
+
+namespace WinFormsApp1
+{
+    public partial class Form1 : Form
+    {
+        private List<Book> books = new List<Book>();
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void LoadButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string json = File.ReadAllText(openFileDialog.FileName);
+                    var data = JsonSerializer.Deserialize<List<Book>>(json);
+
+                    if (data == null || data.Count == 0)
+                    {
+                        throw new Exception();
+                    }
+
+                    books.AddRange(data);
+
+                    dataGridView1.DataSource = null;
+                    dataGridView1.DataSource = books;
+                    dataGridView1.Columns.RemoveAt(dataGridView1.Columns.Count - 1);
+                    MessageBox.Show($"         : {data.Count}        ");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"               : {ex.Message}");
+                }
+            }
+        }
+
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    string json = JsonSerializer.Serialize(books, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(saveFileDialog.FileName, json);
+
+                    MessageBox.Show("                     !");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"                 : {ex.Message}");
+                }
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var year = DateTime.Now.Year;
+
+            if (int.TryParse(YearTextBox.Text, out var value))
+            {
+                year = value;
+            }
+
+            var result =
+                books
+                    .Where(b => b.Year == year)
+                    .ToList();
+
+            dataGridView1.DataSource = result;
+            dataGridView1.Columns.RemoveAt(dataGridView1.Columns.Count - 1);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            var authorName = textBox2.Text;
+            try
+            {
+                var result =
+                    books
+                        .Where(b => b.AuthorName == authorName)
+                        .OrderBy(b => b.PageCount)
+                        .FirstOrDefault()
+                        ?? throw new Exception("                       ");
+
+                dataGridView1.DataSource = new List<Book> { result };
+                dataGridView1.Columns.RemoveAt(dataGridView1.Columns.Count - 1);
+            }
+            catch (Exception ex)
+            {
+                dataGridView1.DataSource = null;
+                MessageBox.Show($"                 : {ex.Message}");
+            }
+        }
+    }
+}
+
+
+
+
+Файл Form1.resx
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+</root>
+
+
+
+
+Файл Program.cs
+
+namespace WinFormsApp1
+{
+    internal static class Program
+    {
+        /// <summary>
+        ///  The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
+        {
+            // To customize application configuration such as set high DPI settings or default font,
+            // see https://aka.ms/applicationconfiguration.
+            ApplicationConfiguration.Initialize();
+            Application.Run(new Form1());
+        }
+    }
+}
+
+
+
+Файл WinFormsApp1.csproj
+
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
+
+
+
+
+Файл WinFormsApp1.sln
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsApp1", "WinFormsApp1.csproj", "{7A722699-15F8-4704-87F8-6A90198E94BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7A722699-15F8-4704-87F8-6A90198E94BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A722699-15F8-4704-87F8-6A90198E94BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A722699-15F8-4704-87F8-6A90198E94BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A722699-15F8-4704-87F8-6A90198E94BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {80FAEFF4-6013-4AAD-9E12-94F65CBFEF34}
+	EndGlobalSection
+EndGlobal
+
