@@ -29,14 +29,13 @@ namespace WinFormsApp1
 
                     books.AddRange(data);
 
-                    dataGridView1.DataSource = null;
-                    dataGridView1.DataSource = books;
-                    dataGridView1.Columns.RemoveAt(dataGridView1.Columns.Count - 1);
-                    MessageBox.Show($"Загружено: {data.Count} записей");
+                    ReloadDataGrip(books);
+
+                    MessageBox.Show($"пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {data.Count} пїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка загрузки: {ex.Message}");
+                    MessageBox.Show($"пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {ex.Message}");
                 }
             }
         }
@@ -52,11 +51,11 @@ namespace WinFormsApp1
                     string json = JsonSerializer.Serialize(books, new JsonSerializerOptions { WriteIndented = true });
                     File.WriteAllText(saveFileDialog.FileName, json);
 
-                    MessageBox.Show("Файл успешно сохранён!");
+                    MessageBox.Show("пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка сохранения: {ex.Message}");
+                    MessageBox.Show($"пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {ex.Message}");
                 }
             }
         }
@@ -75,8 +74,7 @@ namespace WinFormsApp1
                     .Where(b => b.Year == year)
                     .ToList();
 
-            dataGridView1.DataSource = result;
-            dataGridView1.Columns.RemoveAt(dataGridView1.Columns.Count - 1);
+            ReloadDataGrip(result);
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -89,16 +87,65 @@ namespace WinFormsApp1
                         .Where(b => b.AuthorName == authorName)
                         .OrderBy(b => b.PageCount)
                         .FirstOrDefault()
-                        ?? throw new Exception("Не найдена книга автора");
+                        ?? throw new Exception("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ");
 
-                dataGridView1.DataSource = new List<Book> { result };
-                dataGridView1.Columns.RemoveAt(dataGridView1.Columns.Count - 1);
+                ReloadDataGrip([result]);
             }
             catch (Exception ex)
             {
                 dataGridView1.DataSource = null;
-                MessageBox.Show($"Ошибка сохранения: {ex.Message}");
+                MessageBox.Show($"пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {ex.Message}");
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var authorName = AddAuthorNameTextBox.Text;
+
+                if (!int.TryParse(AddYearTextBox.Text, out var year))
+                {
+                    throw new Exception("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.");
+                }
+
+                if (!int.TryParse(AddPageCountTextBox.Text, out var pageCount))
+                {
+                    throw new Exception("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
+                }
+
+                var book = new Book
+                {
+                    Id = Guid.NewGuid(),
+                    AuthorName = authorName,
+                    Year = year,
+                    PageCount = pageCount
+                };
+
+                books.Add(book);
+
+                ReloadDataGrip(books);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {ex.Message}");
+                return;
+            }
+
+            MessageBox.Show("пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
+        }
+
+
+        private void ReloadDataGrip(List<Book> books)
+        {
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = books;
+            dataGridView1.Columns.RemoveAt(dataGridView1.Columns.Count - 1);
+        }
+
+        private void ReloadButton_Click(object sender, EventArgs e)
+        {
+            ReloadDataGrip(books);
         }
     }
 }
